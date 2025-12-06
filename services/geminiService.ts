@@ -1,10 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { BreathingPattern } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 export const getCustomBreathingExercise = async (situation: string): Promise<BreathingPattern> => {
   try {
+    // Initialize the client lazily to prevent top-level errors if the environment isn't ready
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
     const model = "gemini-2.5-flash";
     const response = await ai.models.generateContent({
       model: model,
