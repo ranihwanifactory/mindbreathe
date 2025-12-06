@@ -1,0 +1,5 @@
+{
+  "name": "MindBreath",
+  "description": "다양한 호흡법을 통해 심신 안정을 돕는 호흡 시뮬레이터 앱입니다. 클래식한 호흡법부터 현재 감정 상태에 맞춘 AI 생성 맞춤형 호흡법까지 제공합니다.",
+  "requestFramePermissions": []
+}
