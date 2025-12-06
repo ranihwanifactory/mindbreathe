@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DEFAULT_PATTERNS, Icons } from './constants';
 import { BreathingPattern, Screen } from './types';
 import BreathingSimulator from './components/BreathingSimulator';
@@ -10,6 +10,44 @@ const App: React.FC = () => {
   const [customInput, setCustomInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then((choiceResult: any) => {
+      if (choiceResult.outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    });
+  };
+
+  const handleShareClick = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'MindBreath',
+          text: 'MindBreath와 함께 호흡하며 마음의 안정을 찾아보세요.',
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.log('Error sharing:', error);
+      }
+    } else {
+      // Fallback
+      navigator.clipboard.writeText(window.location.href);
+      alert('주소가 복사되었습니다!');
+    }
+  };
 
   const startPattern = (pattern: BreathingPattern) => {
     setSelectedPattern(pattern);
@@ -34,11 +72,31 @@ const App: React.FC = () => {
 
   const renderHome = () => (
     <div className="min-h-screen bg-[#0f172a] text-slate-100 p-6 flex flex-col max-w-2xl mx-auto">
-      <header className="py-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-calm-300 to-indigo-300 bg-clip-text text-transparent">
-          MindBreath
-        </h1>
-        <p className="text-slate-400 mt-2">호흡을 통해 삶의 균형을 찾아보세요.</p>
+      <header className="py-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-calm-300 to-indigo-300 bg-clip-text text-transparent">
+            MindBreath
+          </h1>
+          <p className="text-slate-400 mt-2">호흡을 통해 삶의 균형을 찾아보세요.</p>
+        </div>
+        <div className="flex gap-2">
+           <button 
+            onClick={handleShareClick}
+            className="p-2 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+            title="공유하기"
+          >
+            <Icons.Share />
+          </button>
+          {deferredPrompt && (
+            <button 
+              onClick={handleInstallClick}
+              className="p-2 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white transition-colors"
+              title="앱 설치"
+            >
+              <Icons.Download />
+            </button>
+          )}
+        </div>
       </header>
 
       {/* AI Assistant Section */}

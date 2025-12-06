@@ -55,6 +55,18 @@ export const Icons = {
   X: () => React.createElement('svg', svgProps, [
     path("M18 6 6 18"),
     path("m6 6 12 12")
+  ]),
+  Share: () => React.createElement('svg', svgProps, [
+    React.createElement('circle', { cx: "18", cy: "5", r: "3", key: "c1" }),
+    React.createElement('circle', { cx: "6", cy: "12", r: "3", key: "c2" }),
+    React.createElement('circle', { cx: "18", cy: "19", r: "3", key: "c3" }),
+    path("m8.59 13.51 6.83 3.98"),
+    path("m15.41 6.51-6.82 3.98")
+  ]),
+  Download: () => React.createElement('svg', svgProps, [
+    path("M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"),
+    path("m7 10 5 5 5-5"),
+    path("M12 15V3")
   ])
 };
 
